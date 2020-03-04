@@ -1,0 +1,720 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>CETIC - Brokers</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/cetic.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section class="homepage" data-background-image="img/background-homepage.png" data-background-size="contain">
+					<h1>Message Brokers<h1/>
+					<h2>Definition and classification of message brokers</h2>
+					<h3>Fabian Steels - Software and Systems Technologies</h3>
+					<i> <small> fabian.steels@cetic.be </small> </i>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+					<script type="text/template">
+						# What is a broker ?
+						## Messaging topologies
+					</script>
+				</section>
+
+			<section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+						## Messaging topologies
+
+						*Broker* and *message bus* are both used to integrate (distributed) applications.
+
+						<table border=0 width="100%">
+						<tr>
+							<td style="border:0px" align="center"><img height="400" width="400" class="plain" data-src="img/broker/Broker_Study-topology-messagebus.png" /></td>
+							<td style="border:0px; vertical-align:middle" align="center">VS</td>
+							<td style="border:0px" align="center"><img height="400" width="400" class="plain" data-src="img/broker/Broker_Study-topology-broker.png" /></td>
+						</tr>
+						<tr style="border:0px">
+							<small>
+							<td align="center">
+								<ul>
+									<small>
+										<li>Shared infrastructure (network, channel) for sending message to recipient</li>
+										<li>Shared protocols (message headers, common data-model/payload)</li>
+										<li>A set of common command messages</li>
+										<li>Route message to recipient</li>
+									</small>
+								</ul>
+							</td>
+							<td></td>
+							<td align="center">
+								<ul>
+									<small>
+										<li>Connect heterogeneous applications</li>
+										<li>Supports disparate protocols</li>
+										<li>Support messenging pattern: message transformer, message aggregation, message splitting, etc.
+										<li>Broker Applications cannot be easily updated</li>
+									</small>
+							</td>
+						</tr>
+						</table>
+
+					</script>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+					<script type="text/template">
+						### When to use a Message Bus or a Broker ?
+						<br/>
+
+						* **Message bus**:
+							* integrated platform (datamodel, protocols, networking)
+							<!--* an application connected to the bus must be adapted to communicate with it-->
+							* generally integrated with distributed frameworks (Akka, Vert.X)
+						* **Broker**:
+							* connect heterogeneous applications (including different networking)
+							* provides protocol conversion, data transformation, routing, etc.
+							<!--* supports integrating applications that can’t be easily changed-->
+					</script>
+				</section>
+			</section>
+
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+					<script type="text/template">
+						# Broker characteristics
+						<ol style="font-size: 50px">
+						<li>Pipeline mechanism</li>
+						<li>Messaging model</li>
+						<li>Operations on message</li>
+ 						<li>Message management</li>
+						<li>High availability and clustering</li>
+						<li>Multi-tenancy</li>
+						</ol>
+					</script>
+				</section>
+
+				<section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+							## 1/6 Pipeline mechanism
+
+							<p style="text-align: left">
+							Definitions
+							</p>
+							>* Push: the data transfer is initiated by the server rather than the client.
+							* Pull: the client requests a message from the server.
+
+							<p style="text-align: left">
+							2 pipeline mechanism
+							</p>
+							* Push/Pull mechanism
+								* Used by Kafka, Pulsar, RabbitMQ (get method)
+							* Push/Push mechanism
+								* Used by RabbitMQ (consume method)
+								* generally used for data flow pipeline.
+						</script>
+					</section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+							### Push/Pull mechanism
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 85%; width: 85%" data-src="img/broker/Broker_push_pull.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										Impacts:
+										<ul>
+											<li>Different consumers can have diverse needs and capabilities (real time, batch mode, hight availability constraint,...)</li>
+											<li>The goal is generally to be able to consume at the maximum possible rate</li>
+											<li>Push/pull model reduces coupling between server and client</li>
+											<li>Round-robin mechanism amongst the connected pull sockets</li>
+										</ul>
+									</td>
+								</tr>
+							</table>
+
+						</script>
+					</section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+							### Push/Push mechanism
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 85%; width: 85%" data-src="img/broker/Broker_Study-PipelinePushPush.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										Impacts:
+										<ul>
+											<li>Distribute load uniformly accross the workers</li>
+											<li>Connection between server en client always on</li>
+										</ul>
+									</td>
+								</tr>
+							</table>
+							<!-- https://stackoverflow.com/questions/29697703/rabbitmq-in-pub-sub-is-the-consumer-polling-the-queue-for-new-messages-or-does?rq=1 -->
+							<!-- rabbit  https://jack-vanlightly.com/blog/2017/12/4/rabbitmq-vs-kafka-part-1-messaging-topologies -->
+
+						</script>
+					</section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							### When to use a Push/Pull or Push/Push mechanism ?
+							<br/>
+
+							* **Push/Pull**:
+								* Less coupling between server and client
+								* Better scalability
+							* **Push/Push**:
+								* Distribute load uniformly accross the workers
+						</script>
+					</section>
+			  </section>
+
+				<section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+								## 2/6 Messenging model
+
+								* consumers consume messages from a channel
+									* topic (logs, partition)
+									* queue (fifo list)
+
+								* 2 messenging model
+									* queuing model: message order is not important (mostly used for stateless applications)
+									* publish-subscribe model (streaming): message order is important. Concept of message broadcasting.
+							</script>
+					</section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+								### Queuing model
+								The messages are balanced between consumers.
+
+								<table>
+									<tr>
+										<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 85%; width: 85%" data-src="img/broker/Broker_Study-QueuingArchi.png"/></td>
+										<td width="50%" style="border:0px; vertical-align:middle">
+											<small>
+											Each message is delivered to and processed by one consumer
+											<br><br>
+											Design for
+											<br>
+											<ul>
+												<li>tasklist, workqueue</li>
+												<li>stateless scenario</li>
+												<li>each consumer runs the same application (cloned/instances)</li>
+											</ul>
+											<br><br>
+											Example:
+											<br>
+											<ul>
+												<li>RabbitMQ (one channel/queue for all consumer)</li>
+												<li>RocketMQ</li>
+												<li>Pulsar (every consumer belongs to the same subscription - shared subscription) </li>
+												<li> ~ Kafka (only exclusive consumer group, could be shared by partition)</li>
+											</ul>
+										</small>
+										</td>
+									</tr>
+								</table>
+							</script>
+					</section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+								### Publish-subscribe model (1/2)
+								Each message is broadcasted between all consumers.
+
+								<table>
+									<tr>
+										<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 85%; width: 85%" data-src="img/broker/Broker_Study-StreamingArchi.png"/></td>
+										<td width="50%" style="border:0px; vertical-align:middle">
+											<small>
+											Each message is delivered to X consumer and processed by X consumer<br>
+											Duplicated channels
+											<br><br>
+											Design for
+											<br>
+											<ul>
+												<li>real time analysis, timeseries</li>
+												<li>stateful scenario (ML, data logic)</li>
+												<li>consumers don't necessarily run the same application</li>
+											</ul>
+											<br><br>
+											Naive usecase with RabbitMQ:
+											<br>
+											<ul>
+												<li>RabbitMQ (X queue for X customers)</li>
+												<li>what about failover ?</li>
+												<li>message order ?</li>
+											</ul>
+										</small>
+										</td>
+									</tr>
+								</table>
+							</script>
+							<!-- https://dzone.com/articles/publish-subscribe-model-in-kafka -->
+							<!-- https://streaml.io/resources/tutorials/concepts/messaging-and-queuing-->
+					</section>
+					<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+							<script type="text/template">
+								### Publish-subscribe model (2/2)
+								Each message is broadcasted between all consumers.
+
+								<table>
+									<tr>
+										<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 85%; width: 85%" data-src="img/broker/Broker_Study-StreamingArchi-failover.png"/></td>
+										<td width="50%" style="border:0px; vertical-align:middle">
+											<small>
+											Concept of subscription/consumer group
+											<br><br>
+											Design for
+											<br>
+											<ul>
+												<li>real time analysis, timeseries</li>
+												<li>statefull scenario (ML, data logic)</li>
+												<li>applications connected to the broker are not necessarily the same</li>
+											</ul>
+											<br><br>
+											Broker with subscription/consumer group
+											<br>
+											<ul>
+												<li>No more data duplication</li>
+												<li>Kafka (every customer belongs to a different consumer group)</li>
+												<li>Pulsar (every customer belongs to a different subscription) + failover mechanism</li>
+											</ul>
+										</small>
+										</td>
+									</tr>
+								</table>
+							</script>
+							<!-- https://dzone.com/articles/publish-subscribe-model-in-kafka -->
+							<!-- https://streaml.io/resources/tutorials/concepts/messaging-and-queuing-->
+					</section>
+			</section>
+			<section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 3/6 Operations on message (1/2)
+							routing: determine the correct message destination with a routing key
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 105%; width: 105%" data-src="img/broker/Broker_Study-routingkey.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+
+										<small>
+										Generally used by queuing model.
+										<br><br>
+										By taking the example of RabbitMQ.
+										<br>
+										<i>
+										Routing element is named exchange.
+										<br><br>
+										A binding could be associated with the exchange element:
+										<br><br>
+										<ul>
+											<li>direct: based on a routing key</li>
+											<li>topic: based on a routing key but allowing wildcard</li>
+											<li>header: based on the header(s)</li>
+										</ul>
+										</i>
+										<br><br>
+										Message priority concept
+									</small>
+									</td>
+								</tr>
+							</table>
+						</script>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 3/6 Operations on message (2/2)
+							Any type of message processing
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 85%; width: 85%" data-src="img/broker/Broker_Study-api-bdpf.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										<small>
+										Generally used by publish/subscribe (streaming) model.
+										<br><br>
+										In Kafka, Pulsar built-in routing component doesn't exist.
+										<br><br>
+										Transformation patterns are generalized by the use of:
+										<br><br>
+										<ol>
+											<li>third-party applications could be used to analyse data (ETL, ML)</li>
+											<ul>
+												<li>message processing using spark, flink</li>
+												<li>Extract Transform Load data</li>
+												<li>Machine learning process</li>
+											</ul>
+											<li>broker contains an API to update channel internally</li>
+											<ul>
+												<li>merging channels</li>
+												<li>filtering messages</li>
+											</ul>
+										</ol>
+										<br><br>
+
+
+									</small>
+									</td>
+								</tr>
+							</table>
+						</script>
+				</section>
+			</section>
+
+			<section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 4/6 Message management (1/2)
+
+							### Message acknowledgement
+
+							<table>
+								<tr>
+									<td width="100%" style="border:0px; vertical-align:middle">
+										Marking messages as read.
+										<br><br>
+										<ul>
+											<li>if consumers fail consuming message, it must be possible to resume consumption</li>
+											<li>a resume point must be set (offset in Kafka, cursor in Pulsar)</li>
+											<li>how to set a resume point:</li>
+											<ul>
+												<li>ack individually: acknowledgement of each message received</li>
+												<li>ack cumulatively: acknowledgement of the last message received</li>
+												<li>the smaller the granularity, the better the management of failure</li>
+											</ul>
+										</ul>
+									</td>
+								</tr>
+							</table>
+
+						</script>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 4/6 Message management (2/2)
+
+							### Message retention
+
+							<table>
+								<tr>
+									<td width="100%" style="border:0px; vertical-align:middle">
+										How long messages are retained
+										<br><br>
+										<ul>
+											<li>once the message is read (see message acking) (RabbitMQ)</li>
+											<li>after retention period (Kafka/~Pulsar)</li>
+											<li>after all subscriptions have been consumed (Pulsar)</li>
+										</ul>
+								  <br>
+									<br>
+										Time-to-Live (TTL)
+										<br><br>
+										<ul>
+											<li>mark the message as read after a TTL period</li>
+										</ul>
+									</td>
+								</tr>
+							</table>
+						</script>
+						<!--https://medium.com/@brad.mcallister123/why-many-developers-end-up-using-both-kafka-and-rabbitmq-b7bbfa465b4c-->
+				</section>
+			</section>
+			<section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 5/6 High availability and clustering(1/3)
+							### Mirroring
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 105%; width: 85%" data-src="img/broker/Broker_Study-data-replication-mirror.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										<small>
+										Principle: duplicate channels on different brokers
+										<br><br>
+										Channels are replicated on all brokers (mirrors)
+										<br><br>
+										<ul>
+											<li>messages published to the queue are replicated to all mirrors</li>
+											<li>consumers are connected to the master</li>
+											<li>mirrors drop messages that have been acknowledged by the master</li>
+											<li>If the node that hosts queue master fails, the oldest mirror will be promoted to the new master</li>
+										</ul>
+									</small>
+									</td>
+								</tr>
+							</table>
+							<!-- https://www.rabbitmq.com/ha.html#overview -->
+
+						</script>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 5/6 High availability and clustering(2/3)
+							### Broker based on logs (Kafka Architecture)
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 185%; width: 65%" data-src="img/broker/Broker_Study-data-repication-kafka.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										<small>
+										Messages are grouped into topic. Topic is a distributed log.
+										<br><br>
+										A topic is divided into partitions
+										<br>
+										<ul>
+											<li>message are routed into partition following an algorithm</li>
+											<li>partition could be replicated on another node</li>
+											<li>it exists leader partition and replicat partition</li>
+										</ul>
+										<br><br>
+										Example:
+										<br>
+											kafka@node-03:~$ kafka-topics --describe --zookeeper 10.0.1.11:2181,10.0.1.12:2181,10.0.1.13:2181 --topic U1
+											<br><br>
+											Topic:U1    PartitionCount:3    ReplicationFactor:2    Configs:
+											<br>
+											---------
+											<br>
+											Topic: U1    Partition: 0    Leader: 1    Replicas: 1,2    Isr: 1,2<br>
+											Topic: U1    Partition: 1    Leader: 2    Replicas: 2,3    Isr: 2,3<br>
+									    Topic: U1    Partition: 2    Leader: 3    Replicas: 3,1    Isr: 3,1<br>
+
+										</quote>
+									</small>
+									</td>
+								</tr>
+							</table>
+						</script>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 5/6 High availability and clustering(3/3)
+							### Broker based on logs (Pulsar Architecture)
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 75%; width: 75%" data-src="img/broker/Broker_Study-data-repication-pulsar.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										<small>
+										Messages are grouped into topic. Topic is a distributed log.
+										<br><br>
+										A topic is divided into sections
+										<br>
+										<ul>
+											<li>sections are distributed into bookies</li>
+											<li>the stateless layer is the serving layer. It allows to receive and deliver messages</li>
+											<li>the stateful layer is the persistence layer. It allows to store data</li>
+										</ul>
+										<br><br>
+										Small comparison with Kafka Architecture
+										<br>
+										<ul>
+											<li>partition centric VS segment centric</li>
+											<li>in Kafka: partition can only be stored on a single node</li>
+											<ul>
+												<li>the capacity is limited by the capacity of the smallest node</li>
+												<li>rebalancing consumes resources</li>
+											</ul>
+										</ul>
+										<br><br>
+
+									</small>
+									</td>
+								</tr>
+							</table>
+						</script>
+				</section>
+			</section>
+			<section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 6/6 Multi-tenancy (1/2)
+
+							* Multi-tenancy is an architecture in which a single instance of a software application serves multiple customers.
+							* Creating multiple instances of a Broker for various users or functions is time consuming.
+							* Multi-tenancy
+								* isolation between tenant (policies)
+								* quota by tenant
+								* security aspects (authentification, authorisation)
+						</script>
+				</section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template">
+							## 6/6 Multi-tenancy (2/2)
+
+							<table>
+								<tr>
+									<td width="50%" style="border:0px; vertical-align:middle"><img class="plain" style="height: 100%; width: 100%" data-src="img/broker/Broker_Study-Multi-tenancy.png"/></td>
+									<td width="50%" style="border:0px; vertical-align:middle">
+										<small>
+										The broker is splitted into tenant environment
+										<br><br>
+										Each tenant environment could define set of policies (authorisation, message retention, TTL,...) that could be applied to channel/topic
+										<br><br>
+										<ul>
+											<li>Kafka contains the elements to build a multi-tenant broker. A lot a configuration is needed</li>
+											<li>Pulsar has already the concept of property (tenant), namespace (set of policy) defined. Less configuration needed</li>
+										</ul>
+										<br><br>
+									</small>
+									</td>
+								</tr>
+							</table>
+						</script>
+				</section>
+			</section>
+			<section>
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+						<script type="text/template" >
+							## Summary
+
+							 | RabbitMQ | Kafka | Pulsar
+							--- | --- | --- | ---
+							*Pipeline Mechanism* | push/pull,push/push | push/pull | push/pull
+							*Messenging Model* | queuing | pub/sub | queuing,pub/sub
+							*Operations on Message* | routing,priority | external/internal libs | external/internal libs
+							*Channel subscription* | N/A | consumer group | subscription
+							*Messages Acking* | ack and delete | cumulative ack | cumulative, individualy ack
+							*High availability* | mirroring | duplication based on partitions | duplication based on bookies
+							*Multi-Tenant* | via virtual host | configuration needed | architecture based on multi-tenancy
+
+						</script>
+				</section>
+		</section>
+
+				<section data-markdown data-background-image="img/logo-cetic.png" data-background-position="98% 2%" data-background-size="10%">
+					<script type="text/template">
+						### Sources
+						* https://www.enterpriseintegrationpatterns.com
+						* https://kafka.apache.org
+						* https://pulsar.apache.org
+						* https://www.rabbitmq.com
+
+						* https://dzone.com/articles/publish-subscribe-model-in-kafka
+					</script>
+						<!--	* https://jack-vanlightly.com/blog/2017/12/4/rabbitmq-vs-kafka-part-1-messaging-topologies-->
+				</section>
+				<section class="lastpage" data-background-image="img/background-lastpage.png">
+					<table>
+						<tr>
+							<td style="width: 50%; text-align: center;">
+								<a href="https://www.cetic.be" /><img class="plain" data-src="img/logo-cetic.png" /></a><br /><br />
+								<small>Aéropole de Charleroi-Gosselies <br />
+								Avenue Jean Mermoz 28 <br />
+								B-6041 Charleroi - Belgique <br /></small>
+								<p><iframe width="640" height="150" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" data-src="http://www.openstreetmap.org/export/embed.html?bbox=4.473830759525299%2C50.47422046442369%2C4.477371275424957%2C50.475966719544715&amp;layer=mapnik" style="border: 1px solid black"></iframe></p>
+								<table>
+									<tr>
+										<td rowspan="2"><img class="plain" data-src="img/icon-twitter.png" /></td>
+										<td>
+											<a href="twitter.com/@CETIC">
+												twitter.com/@CETIC
+												<img class="plain" style="margin: 0 5px" data-src="img/icon-flag-french.png" />
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<a href="https://www.twitter.com/@CETIC_be">
+												twitter.com/@CETIC_be
+												<img class="plain" style="margin: 0px 5px" data-src="img/icon-flag-english.png" />
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<img class="plain" data-src="img/icon-linkedin.png" />
+										</td>
+										<td>
+											<a href="https://www.linkedin.com/company/cetic">
+												linkedin.com/company/cetic
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<img class="plain" data-src="img/icon-mail.png" />
+										</td>
+										<td>
+											<a href="mailto:info@cetic.be">
+												info@cetic.be
+											</a>
+										</td>
+									</tr>
+									<tr>
+										<td>
+											<img class="plain" data-src="img/icon-phone.png" />
+										</td>
+										<td>
+											+32 71 490 700
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td style="text-align: center">
+								<h3>Broker comparison</h3>
+								<br />
+								<br />
+								<br />
+								<table style="width: 100%">
+									<tr>
+										<td style="text-align: center"><h3>Fabian Steels</h3></td>
+									</tr>
+									<tr>
+										<td style="text-align: center"><h4>Research Engineer</h4></td>
+									</tr>
+									<tr>
+										<td style="text-align: center">fabian.steels@cetic.be</td>
+									</tr>
+									<tr>
+										<td style="text-align: center">+32 489 30 80 92</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</section>
+			</div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+				slideNumber: true,
+				width: "100%",
+				height: "100%",
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>

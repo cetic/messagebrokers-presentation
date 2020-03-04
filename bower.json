@@ -1,0 +1,28 @@
+{
+  "name": "reveal.js",
+  "version": "3.3.0",
+  "main": [
+    "js/reveal.js",
+    "css/reveal.css"
+  ],
+  "description": "Message broker",
+  "homepage": "http://demo-slides.openshift.ext.cetic.be",
+  "license": "MIT",
+  "author": {
+    "name": "Fabian Steels",
+    "email": "fabian.steels@cetic.be"
+  },
+  "dependencies": {
+    "headjs": "~1.0.3"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://git.cetic.be/OpenShift/slides.git"
+  },
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test"
+  ]
+}

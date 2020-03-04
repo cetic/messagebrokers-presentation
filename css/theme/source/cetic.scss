@@ -1,0 +1,84 @@
+/**
+ * CETIC theme for reveal.js.
+ */
+
+
+// Default mixins and settings -----------------
+@import "../template/mixins";
+@import "../template/settings";
+// ---------------------------------------------
+
+// Include theme-specific fonts
+@import url(../../lib/font/source-sans-pro/source-sans-pro.css);
+
+$backgroundColor: white;
+
+$mainColor: rgb(78,80,82);
+$headingColor: rgb(78,80,82);
+
+$mainFontSize: 38px;
+$mainFont: 'Source Sans Pro', Helvetica, sans-serif;
+$headingFont: 'Source Sans Pro', Helvetica, sans-serif;
+$headingTextShadow: none;
+$headingLetterSpacing: normal;
+$headingTextTransform: uppercase;
+$headingFontWeight: 600;
+$linkColor: rgb(111,176,82);
+$linkColorHover: lighten( $linkColor, 15% );
+$selectionBackgroundColor: lighten( $linkColor, 25% );
+
+$heading1Size: 2.5em;
+$heading2Size: 1.6em;
+$heading3Size: 1.3em;
+$heading4Size: 1.0em;
+
+section.has-dark-background {
+	&, h1, h2, h3, h4, h5, h6 {
+		color: #fff;
+	}
+}
+
+// Theme template ------------------------------
+@import "../template/theme";
+// ---------------------------------------------
+
+.reveal section.homepage {
+	h1{
+		font-size: 1.8em;
+	}
+	h2{
+		font-size: 1em;
+		color: $linkColor;
+	}
+	h3{
+		font-size: 0.7em;
+	}
+}
+
+.reveal section.lastpage table {
+	h1, h2, h3 {
+		color: $backgroundColor;
+		margin:0;
+	}
+
+	img {
+		padding: 0;
+		margin: 0;
+	}
+	td {
+		padding: 0;
+		margin: 0;
+		vertical-align: middle;
+		font-size: 0.8em;
+	}
+}
+
+.reveal .label {
+	padding: 2px;
+	margin: 5px;
+}
+.reveal .badge {
+	 padding: 3px;
+	margin: 5px;
+	line-height: 40px;
+}
